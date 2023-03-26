@@ -17,28 +17,58 @@ export default class NewBill {
   }
   handleChangeFile = e => {
     e.preventDefault()
+    const inputfile = this.document.querySelector(`input[data-testid="file"]`)
+    const inputFileErrorMsg = this.document.querySelector(`.error-msg`)
     const file = this.document.querySelector(`input[data-testid="file"]`).files[0]
-    const filePath = e.target.value.split(/\\/g)
-    const fileName = filePath[filePath.length-1]
-    const formData = new FormData()
-    const email = JSON.parse(localStorage.getItem("user")).email
-    formData.append('file', file)
-    formData.append('email', email)
 
-    this.store
-      .bills()
-      .create({
-        data: formData,
-        headers: {
-          noContentType: true
-        }
-      })
-      .then(({fileUrl, key}) => {
-        console.log(fileUrl)
-        this.billId = key
-        this.fileUrl = fileUrl
-        this.fileName = fileName
-      }).catch(error => console.error(error))
+    const filePath = e.target.value.split(/\\/g)
+
+    // DEBUG: pour contrôler l'extension du fichier: on récupérer le type de fichier avec .type, on récupère la partie après le slash pour comparaison et on valide ou non.
+    // on peut aussi utilisé l'attribut 'accept' dans le html : accept="image/png, image/jpg, image/jpeg"
+    const fileType = document.querySelector(`input[data-testid="file"]`).files[0].type;
+    const fileExtension = fileType.split(/\//g)[1];
+
+    const controlPictureExtension = (x)=>{
+      return x === 'jpg' || x === 'png' || x === 'jpeg';
+    }
+    const isGoodExtension = controlPictureExtension(fileExtension)
+
+    const fileName = filePath[filePath.length-1]
+
+    if (isGoodExtension === true){
+      inputfile.classList.remove("red-border");
+      inputfile.removeAttribute("aria-invalid")
+      inputfile.setAttribute("aria-invalid",false)
+      inputfile.classList.add("blue-border")
+      inputFileErrorMsg.style.visibility = "hidden"
+
+      const formData = new FormData()
+      const email = JSON.parse(localStorage.getItem("user")).email
+      formData.append('file', file)
+      formData.append('email', email)
+      this.store
+          .bills()
+          .create({
+            data: formData,
+            headers: {
+              noContentType: true
+            }
+          })
+          .then(({fileUrl, key}) => {
+            this.billId = key
+            this.fileUrl = fileUrl
+            this.fileName = fileName
+          })
+          .catch(error => console.error(error))
+    } else{
+      inputfile.classList.remove("blue-border")
+      inputfile.classList.add("red-border")
+      inputfile.removeAttribute("aria-invalid")
+      inputfile.setAttribute("aria-invalid",true)
+      inputFileErrorMsg.style.visibility = "visible"
+      inputfile.value=""
+
+    }
   }
   handleSubmit = e => {
     e.preventDefault()

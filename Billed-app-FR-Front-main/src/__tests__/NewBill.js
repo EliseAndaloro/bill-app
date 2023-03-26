@@ -18,8 +18,10 @@ import router from "../app/Router.js";
 jest.mock("../app/store", () => mockStore) // je mock le Store, comme ça j'utilise mockstore et ces données dans __tests__/store.js
 
 beforeEach(() => {
-  Object.defineProperty(window, "localStorage", { value: localStorageMock }); // utilise le __mocks__/localStorage.js
-  window.localStorage.setItem('user', JSON.stringify({ type: 'Employee' })); // initialise l'user comme employee avec le localStorage
+  // utilise le __mocks__/localStorage.js
+  Object.defineProperty(window, "localStorage", { value: localStorageMock });
+  // initialise l'user comme employee avec le localStorage
+  window.localStorage.setItem('user', JSON.stringify({ type: 'Employee' }));
 
   const root = document.createElement("div");
   root.setAttribute("id", "root");

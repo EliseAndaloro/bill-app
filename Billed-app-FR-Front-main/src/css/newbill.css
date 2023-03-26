@@ -22,6 +22,19 @@
   border-radius: 5px;
 }
 
+.red-border {
+  opacity: 0.5;
+  border: 2px solid red !important;
+  box-sizing: border-box;
+  border-radius: 5px;
+}
+
+.error-msg {
+  font-size: 12px;
+  visibility: hidden;
+  color: red;
+}
+
 label {
   font-style: normal;
   font-weight: 500;
